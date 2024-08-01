@@ -77,22 +77,26 @@ public:
 
 // Main function
 int main() {
-    // Create Song objects
-    Song song1("Shape of You", "Ed Sheeran", "Divide", 233, "Pop");
-    Song song2("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave");
+    // Create an array of Song objects
+    Song songArray[3] = {
+        Song("Shape of You", "Ed Sheeran", "Divide", 233, "Pop"),
+        Song("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave"),
+        Song("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock")
+    };
 
     // Create a Playlist object
     Playlist playlist("My Favorite Songs");
 
-    // Add songs to the playlist
-    playlist.addSong(song1);
-    playlist.addSong(song2);
+    // Add songs to the playlist from the array
+    for (int i = 0; i < 3; i++) {
+        playlist.addSong(songArray[i]);
+    }
 
     // Display the playlist
     playlist.displayPlaylist();
 
     // Demonstrating the use of this pointer
-    Song* currentSong = song1.getCurrentSong();
+    Song* currentSong = songArray[0].getCurrentSong();
     Playlist* currentPlaylist = playlist.getCurrentPlaylist();
 
     std::cout << "\nUsing 'this' pointer:\n";
