@@ -13,8 +13,13 @@ private:
 
 public:
     // Constructor
-    Song(std::string t, std::string a, std::string al, int d, std::string g)
-        : title(t), artist(a), album(al), duration(d), genre(g) {}
+    Song(std::string title, std::string artist, std::string album, int duration, std::string genre) {
+        this->title = title;  // Use this pointer to distinguish member variable from parameter
+        this->artist = artist;
+        this->album = album;
+        this->duration = duration;
+        this->genre = genre;
+    }
 
     // Getter methods
     std::string getTitle() const { return title; }
@@ -22,6 +27,11 @@ public:
     std::string getAlbum() const { return album; }
     int getDuration() const { return duration; }
     std::string getGenre() const { return genre; }
+
+    // Method that returns the current object
+    Song* getCurrentSong() {
+        return this; // Returning the pointer to the current object
+    }
 
     // Display song details
     void displayInfo() const {
@@ -41,11 +51,18 @@ private:
 
 public:
     // Constructor
-    Playlist(std::string n) : name(n) {}
+    Playlist(std::string name) {
+        this->name = name; // Use this pointer to distinguish member variable from parameter
+    }
 
     // Add a song to the playlist
     void addSong(const Song& song) {
         songs.push_back(song);
+    }
+
+    // Method that returns the current object
+    Playlist* getCurrentPlaylist() {
+        return this; // Returning the pointer to the current object
     }
 
     // Display all songs in the playlist
@@ -73,6 +90,14 @@ int main() {
 
     // Display the playlist
     playlist.displayPlaylist();
+
+    // Demonstrating the use of this pointer
+    Song* currentSong = song1.getCurrentSong();
+    Playlist* currentPlaylist = playlist.getCurrentPlaylist();
+
+    std::cout << "\nUsing 'this' pointer:\n";
+    std::cout << "Current Song: " << currentSong->getTitle() << "\n";
+    std::cout << "Current Playlist: " << currentPlaylist->getCurrentPlaylist() << "\n";
 
     return 0;
 }
