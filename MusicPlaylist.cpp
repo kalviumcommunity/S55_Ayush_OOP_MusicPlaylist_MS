@@ -47,6 +47,11 @@ public:
         return totalSongs;
     }
 
+    // New static method to display a summary of songs
+    static void displaySongSummary() {
+        std::cout << "Total number of songs created: " << totalSongs << "\n";
+    }
+
     // Display song details
     void displayInfo() const {
         std::cout << "Title: " << title << "\n"
@@ -131,8 +136,8 @@ int main() {
     // Display the playlist
     playlist->displayPlaylist();
 
-    // Demonstrating the use of static variables and the this pointer
-    std::cout << "\nTotal Songs Created: " << Song::getTotalSongs() << "\n";
+    // Demonstrating the use of static variables, static member function, and the this pointer
+    Song::displaySongSummary();
     std::cout << "Total Playlists Created: " << Playlist::getTotalPlaylists() << "\n";
 
     // Clean up dynamically allocated memory
@@ -140,7 +145,7 @@ int main() {
 
     // The Playlist destructor will delete each Song in the playlist, so no need to delete songs individually
     std::cout << "\nAfter cleanup:\n";
-    std::cout << "Total Songs Remaining: " << Song::getTotalSongs() << "\n";
+    Song::displaySongSummary();
     std::cout << "Total Playlists Remaining: " << Playlist::getTotalPlaylists() << "\n";
 
     return 0;
