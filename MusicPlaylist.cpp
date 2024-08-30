@@ -11,14 +11,23 @@ private:
     int duration; // in seconds
     std::string genre;
 
+    // Static variable to keep track of the total number of songs
+    static int totalSongs;
+
 public:
     // Constructor
     Song(std::string title, std::string artist, std::string album, int duration, std::string genre) {
-        this->title = title;  // Use this pointer to distinguish member variable from parameter
+        this->title = title;
         this->artist = artist;
         this->album = album;
         this->duration = duration;
         this->genre = genre;
+        totalSongs++; // Increment totalSongs whenever a new Song is created
+    }
+
+    // Destructor
+    ~Song() {
+        totalSongs--; // Decrement totalSongs when a Song is destroyed
     }
 
     // Getter methods
@@ -33,6 +42,11 @@ public:
         return this; // Returning the pointer to the current object
     }
 
+    // Static method to get the total number of songs
+    static int getTotalSongs() {
+        return totalSongs;
+    }
+
     // Display song details
     void displayInfo() const {
         std::cout << "Title: " << title << "\n"
@@ -43,17 +57,23 @@ public:
     }
 };
 
+// Initialize the static variable
+int Song::totalSongs = 0;
 
 // Playlist class definition
 class Playlist {
 private:
     std::string name;
-    std::vector<Song*> songs; // Store pointers to dynamically allocated Song objects
+    std::vector<Song*> songs;
+
+    // Static variable to keep track of the total number of playlists
+    static int totalPlaylists;
 
 public:
     // Constructor
     Playlist(std::string name) {
-        this->name = name; // Use this pointer to distinguish member variable from parameter
+        this->name = name;
+        totalPlaylists++; // Increment totalPlaylists whenever a new Playlist is created
     }
 
     // Destructor to clean up dynamically allocated songs
@@ -61,6 +81,7 @@ public:
         for (Song* song : songs) {
             delete song; // Free each Song object
         }
+        totalPlaylists--; // Decrement totalPlaylists when a Playlist is destroyed
     }
 
     // Add a song to the playlist
@@ -73,6 +94,11 @@ public:
         return this; // Returning the pointer to the current object
     }
 
+    // Static method to get the total number of playlists
+    static int getTotalPlaylists() {
+        return totalPlaylists;
+    }
+
     // Display all songs in the playlist
     void displayPlaylist() const {
         std::cout << "Playlist: " << name << "\n";
@@ -82,6 +108,9 @@ public:
         }
     }
 };
+
+// Initialize the static variable
+int Playlist::totalPlaylists = 0;
 
 // Main function
 int main() {
@@ -102,17 +131,17 @@ int main() {
     // Display the playlist
     playlist->displayPlaylist();
 
-    // Demonstrating the use of this pointer
-    Song* currentSong = songArray[0]->getCurrentSong();
-    Playlist* currentPlaylist = playlist->getCurrentPlaylist();
-
-    std::cout << "\nUsing 'this' pointer:\n";
-    std::cout << "Current Song: " << currentSong->getTitle() << "\n";
-    std::cout << "Current Playlist: " << currentPlaylist->getCurrentPlaylist() << "\n";
+    // Demonstrating the use of static variables and the this pointer
+    std::cout << "\nTotal Songs Created: " << Song::getTotalSongs() << "\n";
+    std::cout << "Total Playlists Created: " << Playlist::getTotalPlaylists() << "\n";
 
     // Clean up dynamically allocated memory
     delete playlist;
+
     // The Playlist destructor will delete each Song in the playlist, so no need to delete songs individually
+    std::cout << "\nAfter cleanup:\n";
+    std::cout << "Total Songs Remaining: " << Song::getTotalSongs() << "\n";
+    std::cout << "Total Playlists Remaining: " << Playlist::getTotalPlaylists() << "\n";
 
     return 0;
 }
