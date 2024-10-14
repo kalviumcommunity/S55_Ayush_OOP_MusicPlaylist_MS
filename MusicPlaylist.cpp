@@ -5,17 +5,18 @@
 // Song class definition
 class Song {
 private:
+    // Private members that should not be accessed directly
     std::string title;
     std::string artist;
     std::string album;
     int duration; // in seconds
     std::string genre;
 
-    // Static variable to keep track of the total number of songs
+    // Static variable to keep track of the total number of songs (internal detail)
     static int totalSongs;
 
 public:
-    // Constructor
+    // Constructor (public interface for creating a Song object)
     Song(std::string title, std::string artist, std::string album, int duration, std::string genre) {
         this->title = title;
         this->artist = artist;
@@ -30,31 +31,31 @@ public:
         totalSongs--; // Decrement totalSongs when a Song is destroyed
     }
 
-    // Accessors (Getters)
+    // Accessors (public interface to access private members)
     std::string getTitle() const { return title; }
     std::string getArtist() const { return artist; }
     std::string getAlbum() const { return album; }
     int getDuration() const { return duration; }
     std::string getGenre() const { return genre; }
 
-    // Mutators (Setters)
+    // Mutators (public interface to modify private members)
     void setTitle(const std::string& newTitle) { title = newTitle; }
     void setArtist(const std::string& newArtist) { artist = newArtist; }
     void setAlbum(const std::string& newAlbum) { album = newAlbum; }
     void setDuration(int newDuration) { duration = newDuration; }
     void setGenre(const std::string& newGenre) { genre = newGenre; }
 
-    // Static method to get the total number of songs
+    // Static method to get the total number of songs (abstracts the total count)
     static int getTotalSongs() {
         return totalSongs;
     }
 
-    // Static method to display a summary of songs
+    // Static method to display a summary of songs (abstracts song details)
     static void displaySongSummary() {
         std::cout << "Total number of songs created: " << totalSongs << "\n";
     }
 
-    // Display song details
+    // Public method to display song details
     void displayInfo() const {
         std::cout << "Title: " << title << "\n"
                   << "Artist: " << artist << "\n"
@@ -64,20 +65,26 @@ public:
     }
 };
 
-// Initialize the static variable
+// Initialize the static variable (internal detail, not exposed to users)
 int Song::totalSongs = 0;
 
 // Playlist class definition
 class Playlist {
 private:
-    std::string name;
-    std::vector<Song*> songs;
+    std::string name;           // Private member for playlist name (hidden)
+    std::vector<Song*> songs;   // Private vector holding songs (hidden)
 
-    // Static variable to keep track of the total number of playlists
+    // Static variable to keep track of the total number of playlists (internal detail)
     static int totalPlaylists;
 
+protected:
+    // Protected method to display a message (used only internally in derived classes)
+    void displayProtectedMessage() const {
+        std::cout << "This is a protected message for Playlist.\n";
+    }
+
 public:
-    // Constructor
+    // Constructor (public interface for creating a Playlist object)
     Playlist(std::string name) {
         this->name = name;
         totalPlaylists++; // Increment totalPlaylists whenever a new Playlist is created
@@ -91,23 +98,23 @@ public:
         totalPlaylists--; // Decrement totalPlaylists when a Playlist is destroyed
     }
 
-    // Accessor (Getter)
+    // Accessor (public interface to access private members)
     std::string getName() const { return name; }
 
-    // Mutator (Setter)
+    // Mutator (public interface to modify private members)
     void setName(const std::string& newName) { name = newName; }
 
-    // Add a song to the playlist
+    // Public method to add a song to the playlist
     void addSong(Song* song) {
         songs.push_back(song);
     }
 
-    // Static method to get the total number of playlists
+    // Static method to get the total number of playlists (abstracts playlist count)
     static int getTotalPlaylists() {
         return totalPlaylists;
     }
 
-    // Display all songs in the playlist
+    // Public method to display all songs in the playlist
     void displayPlaylist() const {
         std::cout << "Playlist: " << name << "\n";
         for (const auto& song : songs) {
@@ -117,7 +124,7 @@ public:
     }
 };
 
-// Initialize the static variable
+// Initialize the static variable (internal detail, not exposed to users)
 int Playlist::totalPlaylists = 0;
 
 // Main function
@@ -136,12 +143,12 @@ int main() {
         playlist->addSong(songArray[i]);
     }
 
-    // Demonstrate encapsulation with mutator methods
+    // Demonstrate abstraction with mutator methods (setting values through public interfaces)
     songArray[0]->setTitle("Perfect");
     songArray[1]->setDuration(210);
     playlist->setName("Chill Vibes");
 
-    // Display the updated playlist
+    // Display the updated playlist (abstracting internal details from the user)
     playlist->displayPlaylist();
 
     // Demonstrating the use of static variables and static member functions
