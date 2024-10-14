@@ -30,24 +30,26 @@ public:
         totalSongs--; // Decrement totalSongs when a Song is destroyed
     }
 
-    // Getter methods
+    // Accessors (Getters)
     std::string getTitle() const { return title; }
     std::string getArtist() const { return artist; }
     std::string getAlbum() const { return album; }
     int getDuration() const { return duration; }
     std::string getGenre() const { return genre; }
 
-    // Method that returns the current object
-    Song* getCurrentSong() {
-        return this; // Returning the pointer to the current object
-    }
+    // Mutators (Setters)
+    void setTitle(const std::string& newTitle) { title = newTitle; }
+    void setArtist(const std::string& newArtist) { artist = newArtist; }
+    void setAlbum(const std::string& newAlbum) { album = newAlbum; }
+    void setDuration(int newDuration) { duration = newDuration; }
+    void setGenre(const std::string& newGenre) { genre = newGenre; }
 
     // Static method to get the total number of songs
     static int getTotalSongs() {
         return totalSongs;
     }
 
-    // New static method to display a summary of songs
+    // Static method to display a summary of songs
     static void displaySongSummary() {
         std::cout << "Total number of songs created: " << totalSongs << "\n";
     }
@@ -89,14 +91,15 @@ public:
         totalPlaylists--; // Decrement totalPlaylists when a Playlist is destroyed
     }
 
+    // Accessor (Getter)
+    std::string getName() const { return name; }
+
+    // Mutator (Setter)
+    void setName(const std::string& newName) { name = newName; }
+
     // Add a song to the playlist
     void addSong(Song* song) {
         songs.push_back(song);
-    }
-
-    // Method that returns the current object
-    Playlist* getCurrentPlaylist() {
-        return this; // Returning the pointer to the current object
     }
 
     // Static method to get the total number of playlists
@@ -133,10 +136,15 @@ int main() {
         playlist->addSong(songArray[i]);
     }
 
-    // Display the playlist
+    // Demonstrate encapsulation with mutator methods
+    songArray[0]->setTitle("Perfect");
+    songArray[1]->setDuration(210);
+    playlist->setName("Chill Vibes");
+
+    // Display the updated playlist
     playlist->displayPlaylist();
 
-    // Demonstrating the use of static variables, static member function, and the this pointer
+    // Demonstrating the use of static variables and static member functions
     Song::displaySongSummary();
     std::cout << "Total Playlists Created: " << Playlist::getTotalPlaylists() << "\n";
 
