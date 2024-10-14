@@ -13,12 +13,12 @@ private:
     static int totalSongs;
 
 public:
-    // Constructors
+    // Constructor Overloading: Default, Parameterized, and Copy Constructors
     Song() : title("Unknown"), artist("Unknown"), album("Unknown"), duration(0), genre("Unknown") {
         totalSongs++;
         std::cout << "Default constructor called: Creating a song with default values.\n";
     }
-    
+
     Song(std::string title, std::string artist, std::string album, int duration, std::string genre) {
         this->title = title;
         this->artist = artist;
@@ -107,12 +107,12 @@ private:
     static int totalPlaylists;
 
 public:
-    // Constructors
+    // Constructor Overloading: Default and Parameterized
     Playlist() : name("Untitled Playlist") {
         totalPlaylists++;
         std::cout << "Default constructor called: Creating an untitled playlist.\n";
     }
-    
+
     Playlist(std::string name) {
         this->name = name;
         totalPlaylists++;
@@ -127,13 +127,20 @@ public:
         std::cout << "Destructor called: Deleting playlist \"" << name << "\".\n";
     }
 
-    // Methods
-    std::string getName() const { return name; }
-    void setName(const std::string& newName) { name = newName; }
-
+    // Function Overloading: addSong() overloaded with two versions
     void addSong(Song* song) {
         songs.push_back(song);
     }
+
+    // Overloaded addSong to take song details and create the Song object internally
+    void addSong(std::string title, std::string artist, std::string album, int duration, std::string genre) {
+        Song* newSong = new Song(title, artist, album, duration, genre);
+        songs.push_back(newSong);
+    }
+
+    // Methods
+    std::string getName() const { return name; }
+    void setName(const std::string& newName) { name = newName; }
 
     static int getTotalPlaylists() {
         return totalPlaylists;
@@ -190,9 +197,15 @@ int main() {
     SpecialSong* specialSong = new SpecialSong("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave", true);
     specialSong->displaySpecialInfo();
 
-    // Demonstrating multilevel inheritance (VIPPlaylist class)
+    // Demonstrating function overloading (addSong with different signatures)
     VIPPlaylist* vipPlaylist = new VIPPlaylist("Exclusive Hits", true, "VIP Concert Footage");
+    
+    // Using function overload with Song pointer
     vipPlaylist->addSong(new Song("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock"));
+    
+    // Using function overload with song details directly
+    vipPlaylist->addSong("Hotel California", "Eagles", "Hotel California", 391, "Rock");
+    
     vipPlaylist->displayVIPInfo();
 
     // Clean up memory
