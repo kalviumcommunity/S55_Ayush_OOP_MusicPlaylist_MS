@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-// Song class definition (Base class)
+// Abstract Song class definition (Base class with a pure virtual function)
 class Song {
 private:
     std::string title;
@@ -40,7 +40,7 @@ public:
     }
 
     // Destructor
-    ~Song() {
+    virtual ~Song() {
         totalSongs--;
         std::cout << "Destructor called: Deleting a song.\n";
     }
@@ -67,20 +67,14 @@ public:
         std::cout << "Total number of songs created: " << totalSongs << "\n";
     }
 
-    // Display song info
-    void displayInfo() const {
-        std::cout << "Title: " << title << "\n"
-                  << "Artist: " << artist << "\n"
-                  << "Album: " << album << "\n"
-                  << "Duration: " << duration << " seconds\n"
-                  << "Genre: " << genre << "\n";
-    }
+    // Pure virtual function, making Song an abstract class
+    virtual void displayInfo() const = 0; // Pure virtual function to be implemented by derived classes
 };
 
 // Initialize the static variable
 int Song::totalSongs = 0;
 
-// Derived class for Single Inheritance
+// Derived class for Single Inheritance (Concrete class)
 class SpecialSong : public Song {
 private:
     bool isFavorite;
@@ -92,10 +86,19 @@ public:
         std::cout << "SpecialSong constructor called.\n";
     }
 
-    // Method to display special song details
+    // Override the pure virtual function to display song details
+    void displayInfo() const override {
+        std::cout << "Special Song - Title: " << getTitle() << "\n"
+                  << "Artist: " << getArtist() << "\n"
+                  << "Album: " << getAlbum() << "\n"
+                  << "Duration: " << getDuration() << " seconds\n"
+                  << "Genre: " << getGenre() << "\n"
+                  << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
+    }
+
+    // Method to display special song details (for demonstration)
     void displaySpecialInfo() const {
         displayInfo();
-        std::cout << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
     }
 };
 
@@ -134,7 +137,7 @@ public:
 
     // Overloaded addSong to take song details and create the Song object internally
     void addSong(std::string title, std::string artist, std::string album, int duration, std::string genre) {
-        Song* newSong = new Song(title, artist, album, duration, genre);
+        Song* newSong = new SpecialSong(title, artist, album, duration, genre, false);
         songs.push_back(newSong);
     }
 
@@ -149,7 +152,7 @@ public:
     void displayPlaylist() const {
         std::cout << "Playlist: " << name << "\n";
         for (const auto& song : songs) {
-            song->displayInfo();
+            song->displayInfo(); // Polymorphism: Calling overridden displayInfo
             std::cout << "---------------------------\n";
         }
     }
@@ -193,15 +196,15 @@ public:
 
 // Main function
 int main() {
-    // Demonstrating single inheritance (SpecialSong class)
+    // Demonstrating single inheritance (SpecialSong class with virtual function)
     SpecialSong* specialSong = new SpecialSong("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave", true);
     specialSong->displaySpecialInfo();
 
-    // Demonstrating function overloading (addSong with different signatures)
+    // Demonstrating function overloading and virtual function (Playlist and Song)
     VIPPlaylist* vipPlaylist = new VIPPlaylist("Exclusive Hits", true, "VIP Concert Footage");
-    
+
     // Using function overload with Song pointer
-    vipPlaylist->addSong(new Song("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock"));
+    vipPlaylist->addSong(new SpecialSong("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock", false));
     
     // Using function overload with song details directly
     vipPlaylist->addSong("Hotel California", "Eagles", "Hotel California", 391, "Rock");
