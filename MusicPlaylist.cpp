@@ -1,32 +1,33 @@
 #include <iostream>
 #include <string>
 #include <vector>
+using namespace std;
 
 // Abstract Song class definition (Base class with a pure virtual function)
 class Song {
 private:
-    std::string title;
-    std::string artist;
-    std::string album;
+    string title;
+    string artist;
+    string album;
     int duration; // in seconds
-    std::string genre;
+    string genre;
     static int totalSongs;
 
 public:
     // Constructor Overloading: Default, Parameterized, and Copy Constructors
     Song() : title("Unknown"), artist("Unknown"), album("Unknown"), duration(0), genre("Unknown") {
         totalSongs++;
-        std::cout << "Default constructor called: Creating a song with default values.\n";
+        cout << "Default constructor called: Creating a song with default values.\n";
     }
 
-    Song(std::string title, std::string artist, std::string album, int duration, std::string genre) {
+    Song(string title, string artist, string album, int duration, string genre) {
         this->title = title;
         this->artist = artist;
         this->album = album;
         this->duration = duration;
         this->genre = genre;
         totalSongs++;
-        std::cout << "Parameterized constructor called: Creating a song.\n";
+        cout << "Parameterized constructor called: Creating a song.\n";
     }
 
     Song(const Song& other) {
@@ -36,27 +37,21 @@ public:
         this->duration = other.duration;
         this->genre = other.genre;
         totalSongs++;
-        std::cout << "Copy constructor called: Creating a copy of an existing song.\n";
+        cout << "Copy constructor called: Creating a copy of an existing song.\n";
     }
 
     // Destructor
     virtual ~Song() {
         totalSongs--;
-        std::cout << "Destructor called: Deleting a song.\n";
+        cout << "Destructor called: Deleting a song.\n";
     }
 
-    // Getters and Setters
-    std::string getTitle() const { return title; }
-    std::string getArtist() const { return artist; }
-    std::string getAlbum() const { return album; }
+    // Getters
+    string getTitle() const { return title; }
+    string getArtist() const { return artist; }
+    string getAlbum() const { return album; }
     int getDuration() const { return duration; }
-    std::string getGenre() const { return genre; }
-
-    void setTitle(const std::string& newTitle) { title = newTitle; }
-    void setArtist(const std::string& newArtist) { artist = newArtist; }
-    void setAlbum(const std::string& newAlbum) { album = newAlbum; }
-    void setDuration(int newDuration) { duration = newDuration; }
-    void setGenre(const std::string& newGenre) { genre = newGenre; }
+    string getGenre() const { return genre; }
 
     // Static methods
     static int getTotalSongs() {
@@ -64,7 +59,7 @@ public:
     }
 
     static void displaySongSummary() {
-        std::cout << "Total number of songs created: " << totalSongs << "\n";
+        cout << "Total number of songs created: " << totalSongs << "\n";
     }
 
     // Pure virtual function, making Song an abstract class
@@ -74,6 +69,18 @@ public:
 // Initialize the static variable
 int Song::totalSongs = 0;
 
+// New class to handle displaying song details (SRP)
+class SongDisplayer {
+public:
+    static void display(const Song& song) {
+        cout << "Song - Title: " << song.getTitle() << "\n"
+             << "Artist: " << song.getArtist() << "\n"
+             << "Album: " << song.getAlbum() << "\n"
+             << "Duration: " << song.getDuration() << " seconds\n"
+             << "Genre: " << song.getGenre() << "\n";
+    }
+};
+
 // Derived class for Single Inheritance (Concrete class)
 class SpecialSong : public Song {
 private:
@@ -81,45 +88,36 @@ private:
 
 public:
     // Constructor to initialize both Song and SpecialSong properties
-    SpecialSong(std::string title, std::string artist, std::string album, int duration, std::string genre, bool favorite)
+    SpecialSong(string title, string artist, string album, int duration, string genre, bool favorite)
         : Song(title, artist, album, duration, genre), isFavorite(favorite) {
-        std::cout << "SpecialSong constructor called.\n";
+        cout << "SpecialSong constructor called.\n";
     }
 
     // Override the pure virtual function to display song details
     void displayInfo() const override {
-        std::cout << "Special Song - Title: " << getTitle() << "\n"
-                  << "Artist: " << getArtist() << "\n"
-                  << "Album: " << getAlbum() << "\n"
-                  << "Duration: " << getDuration() << " seconds\n"
-                  << "Genre: " << getGenre() << "\n"
-                  << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
-    }
-
-    // Method to display special song details (for demonstration)
-    void displaySpecialInfo() const {
-        displayInfo();
+        SongDisplayer::display(*this);
+        cout << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
     }
 };
 
 // Playlist class definition (Base class)
 class Playlist {
 private:
-    std::string name;
-    std::vector<Song*> songs;
+    string name;
+    vector<Song*> songs;
     static int totalPlaylists;
 
 public:
     // Constructor Overloading: Default and Parameterized
     Playlist() : name("Untitled Playlist") {
         totalPlaylists++;
-        std::cout << "Default constructor called: Creating an untitled playlist.\n";
+        cout << "Default constructor called: Creating an untitled playlist.\n";
     }
 
-    Playlist(std::string name) {
+    Playlist(string name) {
         this->name = name;
         totalPlaylists++;
-        std::cout << "Parameterized constructor called: Creating a playlist named " << name << ".\n";
+        cout << "Parameterized constructor called: Creating a playlist named " << name << ".\n";
     }
 
     ~Playlist() {
@@ -127,7 +125,7 @@ public:
             delete song;
         }
         totalPlaylists--;
-        std::cout << "Destructor called: Deleting playlist \"" << name << "\".\n";
+        cout << "Destructor called: Deleting playlist \"" << name << "\".\n";
     }
 
     // Function Overloading: addSong() overloaded with two versions
@@ -136,24 +134,24 @@ public:
     }
 
     // Overloaded addSong to take song details and create the Song object internally
-    void addSong(std::string title, std::string artist, std::string album, int duration, std::string genre) {
+    void addSong(string title, string artist, string album, int duration, string genre) {
         Song* newSong = new SpecialSong(title, artist, album, duration, genre, false);
         songs.push_back(newSong);
     }
 
     // Methods
-    std::string getName() const { return name; }
-    void setName(const std::string& newName) { name = newName; }
+    string getName() const { return name; }
+    void setName(const string& newName) { name = newName; }
 
     static int getTotalPlaylists() {
         return totalPlaylists;
     }
 
     void displayPlaylist() const {
-        std::cout << "Playlist: " << name << "\n";
+        cout << "Playlist: " << name << "\n";
         for (const auto& song : songs) {
             song->displayInfo(); // Polymorphism: Calling overridden displayInfo
-            std::cout << "---------------------------\n";
+            cout << "---------------------------\n";
         }
     }
 };
@@ -167,30 +165,30 @@ private:
     bool isPremium;
 
 public:
-    PremiumPlaylist(std::string name, bool premium) : Playlist(name), isPremium(premium) {
-        std::cout << "PremiumPlaylist constructor called.\n";
+    PremiumPlaylist(string name, bool premium) : Playlist(name), isPremium(premium) {
+        cout << "PremiumPlaylist constructor called.\n";
     }
 
     void displayPremiumStatus() const {
-        std::cout << "Premium Status: " << (isPremium ? "Yes" : "No") << "\n";
+        cout << "Premium Status: " << (isPremium ? "Yes" : "No") << "\n";
     }
 };
 
 // Derived class from PremiumPlaylist
 class VIPPlaylist : public PremiumPlaylist {
 private:
-    std::string exclusiveContent;
+    string exclusiveContent;
 
 public:
-    VIPPlaylist(std::string name, bool premium, std::string content) 
+    VIPPlaylist(string name, bool premium, string content) 
         : PremiumPlaylist(name, premium), exclusiveContent(content) {
-        std::cout << "VIPPlaylist constructor called.\n";
+        cout << "VIPPlaylist constructor called.\n";
     }
 
     void displayVIPInfo() const {
         displayPlaylist();
         displayPremiumStatus();
-        std::cout << "Exclusive Content: " << exclusiveContent << "\n";
+        cout << "Exclusive Content: " << exclusiveContent << "\n";
     }
 };
 
@@ -198,7 +196,7 @@ public:
 int main() {
     // Demonstrating single inheritance (SpecialSong class with virtual function)
     SpecialSong* specialSong = new SpecialSong("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave", true);
-    specialSong->displaySpecialInfo();
+    specialSong->displayInfo();
 
     // Demonstrating function overloading and virtual function (Playlist and Song)
     VIPPlaylist* vipPlaylist = new VIPPlaylist("Exclusive Hits", true, "VIP Concert Footage");
@@ -215,9 +213,9 @@ int main() {
     delete specialSong;
     delete vipPlaylist;
 
-    std::cout << "\nAfter cleanup:\n";
+    cout << "\nAfter cleanup:\n";
     Song::displaySongSummary();
-    std::cout << "Total Playlists Remaining: " << Playlist::getTotalPlaylists() << "\n";
+    cout << "Total Playlists Remaining: " << Playlist::getTotalPlaylists() << "\n";
 
     return 0;
 }
