@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-// Interface for songs (DIP)
+// Interface for songs (DIP, LSP)
 class ISong {
 public:
     virtual ~ISong() = default;
@@ -55,43 +55,44 @@ public:
         cout << "Total number of songs created: " << totalSongs << "\n";
     }
 
-    // Pure virtual function to be implemented by derived classes
-    virtual void displayInfo() const override = 0;
+    // Virtual function for display
+    void displayInfo() const override {
+        cout << "Song - Title: " << title << "\n"
+             << "Artist: " << artist << "\n"
+             << "Album: " << album << "\n"
+             << "Duration: " << duration << " seconds\n"
+             << "Genre: " << genre << "\n";
+    }
 };
 
 // Initialize the static variable
 int Song::totalSongs = 0;
 
-// SongDisplayer class
-class SongDisplayer {
-public:
-    static void display(const Song& song) {
-        cout << "Song - Title: " << song.getTitle() << "\n"
-             << "Artist: " << song.getArtist() << "\n"
-             << "Album: " << song.getAlbum() << "\n"
-             << "Duration: " << song.getDuration() << " seconds\n"
-             << "Genre: " << song.getGenre() << "\n";
-    }
-};
-
-// SpecialSong class
-class SpecialSong : public Song {
+// FavoriteSongDecorator (LSP: Adds "favorite" functionality without breaking ISong compatibility)
+class FavoriteSongDecorator : public ISong {
 private:
+    ISong* baseSong; // The base song object being decorated
     bool isFavorite;
 
 public:
-    SpecialSong(string title, string artist, string album, int duration, string genre, bool favorite)
-        : Song(title, artist, album, duration, genre), isFavorite(favorite) {
-        cout << "SpecialSong constructor called.\n";
+    FavoriteSongDecorator(ISong* baseSong, bool favorite = false)
+        : baseSong(baseSong), isFavorite(favorite) {}
+
+    ~FavoriteSongDecorator() override {
+        delete baseSong; // Ensure proper cleanup of the base song
+    }
+
+    string getTitle() const override {
+        return baseSong->getTitle();
     }
 
     void displayInfo() const override {
-        SongDisplayer::display(*this);
+        baseSong->displayInfo();
         cout << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
     }
 };
 
-// Playlist class depends on ISong interface (DIP)
+// Playlist class depends on ISong interface (DIP, LSP)
 class Playlist {
 private:
     string name;
@@ -137,14 +138,17 @@ int Playlist::totalPlaylists = 0;
 
 // Main function
 int main() {
-    // Demonstrate single inheritance with ISong
-    SpecialSong* specialSong = new SpecialSong("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave", true);
-    specialSong->displayInfo();
+    // Demonstrate LSP with FavoriteSongDecorator
+    ISong* song1 = new Song("Blinding Lights", "The Weeknd", "After Hours", 200, "Synthwave");
+    ISong* song2 = new Song("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock");
+
+    // Wrap song1 with FavoriteSongDecorator
+    ISong* favoriteSong = new FavoriteSongDecorator(song1, true);
 
     // Create a playlist with ISong dependency
     Playlist* playlist = new Playlist("My Favorites");
-    playlist->addSong(new SpecialSong("Bohemian Rhapsody", "Queen", "A Night at the Opera", 354, "Rock", false));
-    playlist->addSong(specialSong); // Add previously created song
+    playlist->addSong(favoriteSong); // Adding a decorated song
+    playlist->addSong(song2);       // Adding a regular song
 
     playlist->displayPlaylist();
 
